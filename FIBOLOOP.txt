@@ -1,0 +1,45 @@
+;    Assignment #2: Fibonacci Numbers
+;    Due: 09/21/2017 at 11:55 PM
+;    Goal: Create a working MicMac program.
+;    This program calculates the Fibonacci sequence of numbers.
+               ;    Given some value N, the program will compute the Nth Fibonacci number.
+               ;    The number will appear at the last address after instructions.
+	       ;    Some code was borrowed from Example #1 (summation from 1 - 10).
+	       ;    The result is located at address 012.
+	       ;	Creator: Kevin Gomes
+;    NOTE: We assume the first fibo F(0) to be 1, so it should be 1,1,3,5,8...
+;    There are other implementations where F(0) = 0, but it was not stated which to use
+;    in the assignment.
+
+;    May have to press "run" multiple times if N is 10 (by default it is)
+PC 0					  ;    Start the program correctly.
+
+000    0011    Main:   	LODD    N         ;    Get the number (the loop counter).
+
+001    C00E            	JNEG    Stop      ;    If the number is < 0, there is not much we need to do.
+
+002    500E    More:   	JZER    Stop      ;    If the number is 0, we are finished.
+
+003    000F            	LODD    First     ;    Otherwise, make the result First + Second, then
+004    2010            	ADDD    Second    ;        Update what first and second are.
+005    1012        	STOD    Result	  ;    Store the result of First + Second into an address.
+
+006    0010		LODD	Second    ;    Load the second number and 
+007    100F		STOD	First     ;        store it into the first number.	 
+
+008    0012		LODD	Result	  ;	Load the current Fibonacci number and
+009    1010		STOD	Second	  ;	store it into the second number.
+
+00A    0011            	LODD    N         ;    We need to reload the number
+00B    3013            	SUBD    One       ;        in order to decrement it
+00C    1011            	STOD    N         ;        and update it.
+
+00D    6002            	JUMP    More      ;    We go for one more step.
+
+00E    600E    Stop:   	JUMP    Stop      ;    Nothing more to do. Jumps in the same spot over and over.
+
+00F    0000    First:    0                ;    First number used in computation (0).
+010    0001    Second:   1		  ;    Second number used in computation (1).
+011    000A    N:        5                ;    Data to work with (loop counter).
+012    0000    Result:   0                ;    Fibonacci after computations (set at 0).
+013    0001    One:	 1		  ;	  A constant that we can use (1).

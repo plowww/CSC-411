@@ -1,0 +1,58 @@
+;	Author: Kevin Gomes
+;	Assignment #3: Fibonacci, Revisited
+;	Due: 09/28/2017 at 11:55 PM
+;	Goal: Calling sub-program or function in a complete program for MAC-1.
+;	The following code was used to help create this program:
+;	int fibonacci(int n) 
+;  	{ 
+;      		if (n <= 2) 
+;          		return 1; 
+;      		else 
+;          		return fibonacci(n-1) + fibonacci(n-2); 
+;  	}
+
+;	May have to press "run" multiple times if N is high (by default it is).
+;	Cannot compute numbers past 5 for some reason? Starts erasing values from stack, poor stack management.
+PC 0					;	Start the program correctly.
+
+	00FF	Stack=	255		;	Allocate memory for our stack.
+000	70FF	Main:	LOCO	Stack	;	Initializs stack pointer to be bottom of stack.
+001	FA00		SWAP		;
+
+002	0027		LODD	N	;	Loads the value to be used in the function.
+003	F400		PUSH		;	Push N onto stack for use in function.
+004	E008		CALL	Fibo	;	Calls our recursive function.
+005	FC01		INSP	1	;	Increment stack pointer by 1.
+006	1028		STOD	Result	;	Stores our calculated fibonacci number.
+007	6007	Stop:	JUMP	Stop	;	Do nothing forever.
+
+					;	Next, we will go define our function.
+
+008	8001	Fibo:	LODL	1	;	Load N (our function's N)
+009	3026		SUBD	2	;	Do N - 2, store in AC.
+00A	501B		JZER	If	;	If AC (N - 2) = 0, jump to 01B
+00B	C01B		JNEG	If	;	Same as above, but AC < 0 (so we do N - 2 <= 0)
+
+00C	2026	Else:	ADDD	2	;	Add 2 to N, because it didn't work
+00D	FE01		DESP	1	;	Move stack
+00E	3025		SUBD	1	;	Subtract 1
+00F	F400		PUSH		;	Store N - 1
+010	E008		CALL	Fibo	;	Call our function with N - 1
+011	FC01		INSP	1	;	Move pointer back in line
+012	9000		STOL	0	;	Store result of previous Fibo here.
+013	8002		LODL	2	;	Load N again
+014	3026		SUBD	2	;	Subtract N - 2
+015	F400		PUSH		;	Pushes this value in stack
+016	E008		CALL	Fibo	;	Call our function with N - 2
+017    	FC01            INSP    1       ;	Move pointer back in line	
+018	A000		ADDL	0	;	Add the result.
+019	FC01		INSP	1	;	Increase pointer by 1 again.
+01A	F800		RETN		;	Return
+
+01B	7001	If:	LOCO	1	;	Load 1 into the AC.
+01C	F800		RETN		;	Return.
+
+025	0001	One:	1		;	A constant that we can use (1).
+026	0002	Two:	2		;	A constant that we can use (2).
+027	0005	N:	5		;	Data to work with (recursion counter).
+028     0000	Result:	0		;  	Fibonacci after computations (set at 0).
